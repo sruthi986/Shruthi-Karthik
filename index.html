@@ -11,8 +11,9 @@
   <meta property="og:description" content="With love, we invite you to celebrate our wedding together. 02 July 2026 · Basava Seva Sadan, Sadashivpet"/>
   <meta property="og:image"       content="https://sruthi986.github.io/Shruthi-Karthik/cover.jpg"/>
   <meta property="og:url"         content="https://sruthi986.github.io/Shruthi-Karthik/"/>
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height"content="630"/>
+  <meta property="og:image:width"  content="1200"/>
+  <meta property="og:image:height" content="630"/>
+  <meta property="og:image:type"   content="image/jpeg"/>
 
   <!-- WhatsApp specifically uses these -->
   <meta name="twitter:card"        content="summary_large_image"/>
@@ -655,20 +656,19 @@
       /* Envelope */
       .env-banner-name { font-size: 36px; }
 
-      /* Hero — tighter so everything fits in one screen */
-      .hero { padding: 20px 16px; }
-      .vinayaka-wrap { margin-bottom: 6px; }
-      .vinayaka-img { width: 100px; height: 100px; }
-      .ganesh-namah { font-size: 13px; margin-bottom: 10px; }
-      .cordial-text { margin-bottom: 16px; }
-      .cordial-line1, .cordial-line2 { font-size: 12px; line-height: 1.6; }
-      .hero-single-name { font-size: clamp(52px, 13vw, 70px); }
-      .hero-parent-tag { font-size: 11px; margin-top: 4px; margin-bottom: 16px; line-height: 1.6; }
-      .hero-with { font-size: 18px; margin-bottom: 10px; }
-      .hearts-row { margin: 8px 0; }
-      .wave-divider { margin: 10px auto; }
-      .mandala-ring { width: 280px; height: 280px; }
-      .mandala-ring2 { width: 360px; height: 360px; }
+      /* Hero — move Ganesha up, tighten gaps only (no font size changes) */
+      .hero { padding: 10px 16px 30px; }
+      .vinayaka-wrap { margin-bottom: 4px; }
+      .vinayaka-img { width: 110px; height: 110px; }
+      .ganesh-namah { margin-bottom: 8px; letter-spacing: 1px; }
+      .cordial-text { margin-bottom: 14px; }
+      .cordial-line1, .cordial-line2 { line-height: 1.5; }
+      .hero-parent-tag { margin-top: 4px; margin-bottom: 14px; line-height: 1.6; }
+      .hero-with { margin-bottom: 8px; }
+      .hearts-row { margin: 6px 0; }
+      .wave-divider { margin: 8px auto; }
+      .mandala-ring { display: none; }
+      .mandala-ring2 { display: none; }
 
       /* Hero / scratch */
       .scratch-container { max-width: 88vw; }
@@ -925,7 +925,6 @@
 
       <!-- BRIDE'S PARENTS — FIRST -->
       <div class="family-block">
-        <div class="family-role">Bride's Parents</div>
         <div class="family-pname">
           Smt. Ahalya Pantulu<br>
           &amp; Sri Anjaneyulu Pantulu
@@ -934,14 +933,7 @@
 
       <div class="rose-divider">🌸 🌺 🌸</div>
 
-      <!-- GROOM'S PARENTS — SECOND -->
-      <div class="family-block">
-        <div class="family-role">Groom's Parents</div>
-        <div class="family-pname">
-          Smt. Eluri Anitha<br>
-          &amp; Sri Eluri Satyanarayana
-        </div>
-      </div>
+      
     </div>
   </section>
 
