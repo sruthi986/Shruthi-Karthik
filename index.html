@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wedding Invitation – Shruthi & Karthik</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap');
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+
+    :root {
+      --rose:      #f9c6c9;
+      --deep-rose: #e87ea1;
+      --blush:     #fde8ee;
+      --lavender:  #d4b8e0;
+      --peach:     #ffd6b0;
+      --mint:      #b8e4d0;
+      --butter:    #fff0b3;
+      --gold:      #d4a843;
+      --gold-lt:   #f0d080;
+      --text-dark: #4a2040;
+      --text-mid:  #7a4060;
+      --text-soft: #b07090;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: linear-gradient(160deg, #fff5f8 0%, #fef0fa 50%, #f5f0ff 100%);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      color: var(--text-dark);
+    }
+
+    #petals-canvas {
+      position: fixed; inset: 0; pointer-events: none; z-index: 5;
+    }
+
+    #musicBtn {
+      position: fixed; top: 14px; right: 14px; z-index: 9999;
+      width: 46px; height: 46px; border-radius: 50%;
+      border: 2px solid var(--deep-rose);
+      background: white; font-size: 20px; cursor: pointer;
+      box-shadow: 0 4px 16px rgba(232,126,161,0.3);
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.3s;
+    }
+    #musicBtn:hover { background: var(--blush); transform: scale(1.1); }
+
+    /* ══════════════════════════════════
+       ENVELOPE SCREEN
+    ══════════════════════════════════ */
+    #envelopeScreen {
+      position: fixed; inset: 0; z-index: 1000;
+      background: linear-gradient(160deg, #fff5f8 0%, #fde8f5 45%, #ede0ff 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; transition: opacity 1s ease;
+      overflow: hidden;
+    }
+    #envelopeScreen.fade-out { opacity: 0; pointer-events: none; }
+
+    /* Corner flower watermarks */
+    .screen-corner {
+      position: absolute; font-size: 90px; opacity: 0.08;
+      pointer-events: none; z-index: 1;
+      animation: gentlePulse 4s ease-in-out infinite;
+    }
+    .sc-tl { top: -10px;  left: -10px; }
+    .sc-tr { top: -10px;  right: -10px; transform: scaleX(-1); animation-delay: 1s; }
+    .sc-bl { bottom: -10px; left: -10px; transform: rotate(90deg); animation-delay: 2s; }
+    .sc-br { bottom: -10px; right: -10px; transform: rotate(-90deg); animation-delay: 3s; }
+    @keyframes gentlePulse { 0%,100%{opacity:0.08;} 50%{opacity:0.14;} }
+
+    /* Names above envelope */
+    .env-banner {
+      text-align: center; margin-bottom: 20px; position: relative; z-index: 2;
+    }
+    .env-banner-flowers {
+      font-size: 22px; letter-spacing: 10px; opacity: 0.55; margin-bottom: 6px;
+    }
+    .env-banner-name {
+      font-family: 'Great Vibes', cursive;
+      font-size: clamp(38px, 9vw, 60px);
+      color: var(--deep-rose);
+      text-shadow: 0 2px 20px rgba(232,126,161,0.35);
+      animation: nameFloat 4s ease-in-out infinite;
+      line-height: 1.1;
+    }
+    .env-banner-sub {
+      font-family: 'Cinzel', serif; font-size: 10px;
+      letter-spacing: 5px; color: var(--text-soft);
+      text-transform: uppercase; margin-top: 5px;
+    }
+    @keyframes nameFloat {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-7px); }
+    }
+
+    /* Real envelope image */
+    .env-scene {
+      position: relative; z-index: 2;
+      animation: envFloat 3.5s ease-in-out infinite;
+      filter: drop-shadow(0 24px 50px rgba(200,120,160,0.3));
+    }
+    @keyframes envFloat {
+      0%,100% { transform: translateY(0) rotate(-0.8deg); }
+      50%      { transform: translateY(-16px) rotate(0.8deg); }
+    }
+    .env-img {
+      width: clamp(260px, 55vw, 380px);
+      height: auto; display: block;
+      border-radius: 12px;
+    }
+    /* Shake on click (added by JS) */
+    .env-scene.shake {
+      animation: envShake 0.5s ease;
+    }
+    @keyframes envShake {
+      0%,100% { transform: rotate(0deg); }
+      20%      { transform: rotate(-4deg) scale(1.04); }
+      40%      { transform: rotate(4deg)  scale(1.04); }
+      60%      { transform: rotate(-3deg) scale(1.02); }
+      80%      { transform: rotate(3deg)  scale(1.02); }
+    }
+
+    /* Tap hint */
+    .env-tap {
+      margin-top: 24px; text-align: center; position: relative; z-index: 2;
+    }
+    .env-tap p {
+      font-family: 'Cinzel', serif; font-size: 11px;
+      letter-spacing: 5px; color: var(--deep-rose);
+      text-transform: uppercase;
+      animation: tapPulse 1.8s ease-in-out infinite;
+    }
+    .env-tap .tap-arrow {
+      font-size: 20px; display: block; margin-top: 6px;
+      animation: tapPulse 1.8s ease-in-out infinite 0.5s;
+    }
+    @keyframes tapPulse { 0%,100%{opacity:1;} 50%{opacity:0.2;} }
+
+    /* ══════════════════════════════════
+       MAIN INVITATION
+    ══════════════════════════════════ */
+    #invitation { display: none; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(180deg,
+        #fff5f8 0%, #fde8ee 30%, #f8e0f5 60%, #ede0ff 100%);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 60px 20px; position: relative; overflow: hidden;
+      text-align: center;
+    }
+    .hero::after {
+      content:''; position:absolute;
+      width:500px; height:500px; border-radius:50%;
+      background:radial-gradient(circle,rgba(249,198,201,0.4) 0%,transparent 70%);
+      top:50%; left:50%; transform:translate(-50%,-50%);
+      pointer-events:none;
+    }
+
+    .mandala-ring {
+      position:absolute; width:420px; height:420px; border-radius:50%;
+      border:1px dashed rgba(232,126,161,0.3);
+      animation:spinSlow 30s linear infinite;
+      top:50%; left:50%; transform:translate(-50%,-50%);
+      pointer-events:none;
+    }
+    .mandala-ring2 {
+      position:absolute; width:540px; height:540px; border-radius:50%;
+      border:1px dashed rgba(212,184,224,0.25);
+      animation:spinSlow 45s linear infinite reverse;
+      top:50%; left:50%; transform:translate(-50%,-50%);
+      pointer-events:none;
+    }
+    @keyframes spinSlow { to { transform:translate(-50%,-50%) rotate(360deg); } }
+
+    .hero-flowers {
+      font-size:38px; letter-spacing:8px; margin-bottom:10px;
+      animation:nameFloat 4s ease-in-out infinite;
+      position:relative; z-index:1;
+    }
+    .invite-label {
+      font-family:'Cinzel',serif; font-size:11px;
+      letter-spacing:5px; color:var(--deep-rose);
+      text-transform:uppercase; margin-bottom:16px;
+      position:relative; z-index:1;
+    }
+    .together-text {
+      font-size:13px; color:var(--text-soft);
+      letter-spacing:2px; margin-bottom:10px;
+      position:relative; z-index:1;
+    }
+
+    .couple-names {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(60px,14vw,100px);
+      color:var(--deep-rose);
+      line-height:1.05; position:relative; z-index:1;
+      text-shadow:0 4px 20px rgba(232,126,161,0.3);
+      animation:nameGlow 3s ease-in-out infinite alternate;
+    }
+    @keyframes nameGlow {
+      from { text-shadow:0 4px 20px rgba(232,126,161,0.3); }
+      to   { text-shadow:0 4px 40px rgba(232,126,161,0.6); }
+    }
+    .amp { font-size:clamp(40px,9vw,66px); color:var(--lavender); display:block; }
+
+    .hearts-row {
+      display:flex; gap:10px; margin:12px 0;
+      justify-content:center; position:relative; z-index:1;
+    }
+    .heart-beat { font-size:18px; animation:heartBeat 1.4s ease-in-out infinite; }
+    .heart-beat:nth-child(2) { animation-delay:0.2s; }
+    .heart-beat:nth-child(3) { animation-delay:0.4s; }
+    @keyframes heartBeat {
+      0%,100%{transform:scale(1);}
+      14%{transform:scale(1.3);}
+      28%{transform:scale(1);}
+      42%{transform:scale(1.2);}
+    }
+
+    .wave-divider {
+      width:100%; max-width:400px; height:2px;
+      background:linear-gradient(90deg,transparent,var(--rose),var(--lavender),var(--rose),transparent);
+      margin:16px auto; position:relative; z-index:1;
+    }
+
+    /* ─── SCRATCH DATE WIDGET ─── */
+    .scratch-wrap {
+      position:relative; z-index:6; margin-top:6px; text-align:center;
+    }
+    .scratch-hint {
+      font-family:'Cinzel',serif; font-size:11px;
+      letter-spacing:3px; color:var(--text-soft);
+      text-transform:uppercase; margin-bottom:10px;
+      animation:tapPulse 2s ease-in-out infinite;
+    }
+
+    .scratch-container {
+      position:relative; display:inline-block;
+      border-radius:16px; overflow:hidden;
+      box-shadow:0 6px 24px rgba(232,126,161,0.25);
+    }
+    .date-reveal {
+      background:linear-gradient(135deg,#fff0f8,#f5e8ff);
+      padding:18px 36px; border-radius:16px;
+      border:2px solid var(--rose);
+    }
+    .date-reveal .date-line1 {
+      font-family:'Cinzel',serif;
+      font-size:clamp(18px,5vw,28px);
+      color:var(--deep-rose); letter-spacing:3px; font-weight:600;
+    }
+    .date-reveal .date-line2 {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(20px,5vw,30px);
+      color:var(--text-mid); margin-top:2px;
+    }
+
+    #scratchCanvas {
+      position:absolute; top:0; left:0;
+      border-radius:16px; cursor:crosshair; touch-action:none;
+    }
+
+    /* ─── COUNTDOWN (hidden until scratch reveals it) ─── */
+    .countdown-reveal {
+      position:relative; z-index:1;
+      display:none;
+      opacity:0;
+      transform:translateY(24px);
+      transition:opacity 0.9s ease, transform 0.9s ease;
+      margin-top:20px;
+    }
+    .countdown-reveal.shown {
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    .countdown-inner {
+      background:rgba(255,255,255,0.7);
+      border:1.5px solid var(--rose); border-radius:20px;
+      padding:20px 24px;
+      box-shadow:0 4px 24px rgba(232,126,161,0.15);
+      backdrop-filter:blur(6px);
+    }
+    .cd-label {
+      font-family:'Cinzel',serif; font-size:9px;
+      letter-spacing:4px; color:var(--deep-rose);
+      text-transform:uppercase; margin-bottom:14px;
+    }
+    .countdown-grid {
+      display:flex; gap:12px; justify-content:center; flex-wrap:wrap;
+    }
+    .count-box {
+      background:white; border-radius:14px;
+      padding:14px 18px; min-width:64px;
+      box-shadow:0 3px 16px rgba(232,126,161,0.15);
+      border:1.5px solid var(--rose);
+    }
+    .count-num {
+      font-family:'Cinzel',serif; font-size:32px;
+      color:var(--deep-rose); line-height:1;
+    }
+    .count-label {
+      font-size:9px; letter-spacing:2px; text-transform:uppercase;
+      color:var(--text-soft); margin-top:4px;
+    }
+
+    .scratch-done-msg {
+      font-family:'Great Vibes',cursive;
+      font-size:22px; color:var(--deep-rose);
+      margin-top:10px; opacity:0;
+      transition:opacity 0.6s ease;
+      position:relative; z-index:1;
+    }
+    .scratch-done-msg.show { opacity:1; }
+
+    /* ─── SECTIONS ─── */
+    .section {
+      padding:70px 20px; text-align:center;
+      position:relative; overflow:hidden;
+    }
+    .sec-label {
+      font-family:'Cinzel',serif; font-size:11px;
+      letter-spacing:5px; text-transform:uppercase;
+      color:var(--deep-rose); margin-bottom:8px;
+    }
+    .sec-heading {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(38px,8vw,58px);
+      color:var(--text-dark); margin-bottom:40px;
+    }
+
+    /* ─── EVENT CARDS ─── */
+    .events-section {
+      background:linear-gradient(160deg,#fff9f0,#fff0fa,#f5f0ff);
+    }
+    .schedule-grid {
+      display:grid; grid-template-columns:repeat(2,1fr);
+      gap:28px; max-width:860px; margin:0 auto;
+    }
+    @media(max-width:620px){ .schedule-grid{grid-template-columns:1fr;} }
+
+    .schedule-item {
+      border-radius:24px; overflow:hidden;
+      box-shadow:0 12px 40px rgba(0,0,0,0.14);
+      animation:cardFloat 4.8s ease-in-out infinite;
+      transition:transform 0.5s cubic-bezier(.34,1.56,.64,1), box-shadow 0.4s;
+    }
+    .schedule-item:nth-child(2){ animation-delay:1.2s; }
+    @keyframes cardFloat {
+      0%,100%{transform:translateY(0);}
+      50%{transform:translateY(-10px);}
+    }
+    .schedule-item:hover {
+      transform:translateY(-16px) scale(1.03) !important;
+      box-shadow:0 28px 64px rgba(0,0,0,0.2);
+      animation-play-state:paused;
+    }
+    .schedule-item img {
+      width:100%; height:100%; object-fit:cover; display:block; border-radius:24px;
+    }
+
+    /* ─── VENUE ─── */
+    .venue-section { background:linear-gradient(160deg,#f0fff8,#e8f5ff,#f5f0ff); }
+    .venues-wrap {
+      display:flex; flex-wrap:wrap; gap:24px;
+      justify-content:center; max-width:900px; margin:0 auto;
+    }
+    .venue-card {
+      background:white; border-radius:24px;
+      padding:36px 28px; width:300px; text-align:center;
+      box-shadow:0 6px 28px rgba(0,0,0,0.07);
+      border:2px solid transparent;
+      transition:all 0.4s; position:relative; overflow:hidden;
+    }
+    .venue-card::before {
+      content:''; position:absolute; top:0; left:0; right:0; height:5px;
+    }
+    .venue-card:nth-child(1)::before{background:linear-gradient(90deg,var(--rose),var(--lavender));}
+    .venue-card:nth-child(2)::before{background:linear-gradient(90deg,var(--mint),var(--peach));}
+    .venue-card:hover {
+      transform:translateY(-6px);
+      box-shadow:0 16px 44px rgba(0,0,0,0.12);
+      border-color:var(--rose);
+    }
+    .venue-icon-big {
+      font-size:44px; margin-bottom:14px; display:block;
+      animation:nameFloat 3.5s ease-in-out infinite;
+    }
+    .venue-event-tag {
+      font-family:'Cinzel',serif; font-size:9px;
+      letter-spacing:3px; text-transform:uppercase;
+      color:var(--deep-rose); margin-bottom:6px;
+    }
+    .venue-name {
+      font-family:'Cinzel',serif; font-size:15px;
+      color:var(--text-dark); letter-spacing:1.5px; margin-bottom:8px;
+    }
+    .venue-addr { font-size:13px; color:var(--text-soft); line-height:1.7; margin-bottom:22px; }
+    .map-btn {
+      display:inline-flex; align-items:center; gap:8px;
+      background:linear-gradient(135deg,var(--deep-rose),#c0164f);
+      color:white; font-family:'Cinzel',serif;
+      font-size:11px; letter-spacing:2px; text-transform:uppercase;
+      padding:12px 22px; border-radius:30px; text-decoration:none;
+      font-weight:600; transition:all 0.3s;
+      box-shadow:0 4px 16px rgba(232,126,161,0.3);
+    }
+    .map-btn:hover { transform:scale(1.06); box-shadow:0 8px 26px rgba(232,126,161,0.5); }
+
+    /* ─── GALLERY ─── */
+    .gallery-section { background:linear-gradient(160deg,#fff5f8,#f5f0ff); }
+    .photo-strip {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 18px;
+      justify-content: center;
+      max-width: 860px;
+      margin: 40px auto 0;
+      /* horizontal scroll on small screens */
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      padding: 0 16px 16px;
+      scrollbar-width: none;
+    }
+    .photo-strip::-webkit-scrollbar { display: none; }
+
+    .photo-frame {
+      flex-shrink: 0;
+      scroll-snap-align: center;
+      width: 240px; height: 340px; border-radius: 20px;
+      overflow: hidden; box-shadow: 0 10px 36px rgba(0,0,0,0.14);
+      transition: transform 0.4s cubic-bezier(.34,1.56,.64,1), box-shadow 0.4s;
+      border: 4px solid white;
+    }
+    .photo-frame:hover {
+      transform: scale(1.05) rotate(1.5deg);
+      box-shadow: 0 20px 50px rgba(232,126,161,0.28);
+    }
+    .photo-frame:nth-child(2):hover { transform: scale(1.05) rotate(-1.5deg); }
+    .photo-frame:nth-child(3):hover { transform: scale(1.05) rotate(1.5deg); }
+    .photo-frame img { width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
+    .photo-ph {
+      width:100%; height:100%;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      font-size:40px; gap:8px;
+    }
+    .photo-ph span { font-size:12px; color:var(--text-soft); letter-spacing:1px; }
+    .frame-1{background:linear-gradient(135deg,#fde8ee,#ffe0ec);}
+    .frame-2{background:linear-gradient(135deg,#ede0ff,#dcd0ff);}
+    .frame-3{background:linear-gradient(135deg,#e0fff5,#c8f5e0);}
+
+    /* ─── FAMILY ─── */
+    .family-section { background:linear-gradient(160deg,#fff0fa,#fde8ee); }
+    .family-card {
+      background:white; border-radius:28px;
+      padding:44px 32px; max-width:640px; margin:36px auto 0;
+      box-shadow:0 8px 36px rgba(232,126,161,0.12);
+      position:relative; overflow:hidden;
+    }
+    .family-card::before {
+      content:'🌸'; position:absolute; font-size:120px;
+      opacity:0.05; top:-20px; right:-20px; line-height:1;
+    }
+    .family-card::after {
+      content:'🌸'; position:absolute; font-size:120px;
+      opacity:0.05; bottom:-20px; left:-20px; line-height:1;
+      transform:rotate(180deg);
+    }
+
+    .family-quote {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(22px,5vw,32px);
+      color:var(--deep-rose); line-height:1.5;
+      margin-bottom:28px; position:relative; z-index:1;
+    }
+
+    .family-block { margin-bottom:20px; position:relative; z-index:1; text-align:center; }
+    .family-role {
+      font-family:'Cinzel',serif; font-size:10px;
+      letter-spacing:3px; color:var(--text-soft);
+      text-transform:uppercase; margin-bottom:8px;
+    }
+    .family-pname { font-size:16px; color:var(--text-dark); line-height:2; }
+    .family-pname em { font-size:13px; color:var(--text-soft); font-style:normal; }
+    .family-dot {
+      font-size:12px; color:var(--text-soft); display:block;
+      letter-spacing:1px; margin-top:3px; font-style:italic;
+    }
+
+    .rose-divider {
+      font-size:20px; letter-spacing:8px; margin:22px 0;
+      color:var(--rose); position:relative; z-index:1; text-align:center;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      padding:50px 20px; text-align:center;
+      background:linear-gradient(180deg,#fde8ee,#ffe8f5,#f5e8ff);
+      position:relative; overflow:hidden;
+    }
+    .footer::before {
+      content:'🌸 🌷 🌺 🌷 🌸 🌷 🌺 🌷 🌸';
+      display:block; font-size:20px; letter-spacing:6px;
+      margin-bottom:20px; opacity:0.5;
+    }
+    .footer-names {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(40px,9vw,62px);
+      color:var(--deep-rose);
+      animation:nameGlow 3s ease-in-out infinite alternate;
+    }
+    .footer-msg {
+      font-family:'Cinzel',serif; font-size:11px;
+      letter-spacing:4px; text-transform:uppercase;
+      color:var(--text-soft); margin-top:10px;
+    }
+    .footer-date { margin-top:16px; font-size:14px; color:var(--text-mid); letter-spacing:3px; }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity:0; transform:translateY(40px);
+      transition:opacity 0.9s ease,transform 0.9s ease;
+    }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+
+    @media(max-width:600px){
+      /* Envelope */
+      .env-banner-name { font-size: 36px; }
+
+      /* Hero / scratch */
+      .scratch-container { max-width: 88vw; }
+      .date-reveal { padding: 14px 18px; }
+      .date-reveal .date-line1 { font-size: 17px; letter-spacing: 1px; }
+      .date-reveal .date-line2 { font-size: 18px; }
+      .countdown-inner { padding: 14px 10px; }
+      .count-box { padding: 10px 12px; min-width: 54px; }
+      .count-num { font-size: 26px; }
+      .count-label { font-size: 8px; }
+
+      /* Event cards */
+      .schedule-grid { grid-template-columns: 1fr; gap: 20px; }
+
+      /* Photos — still swipeable row, smaller cards */
+      .photo-frame { width: 195px; height: 275px; border-width: 3px; }
+
+      /* Venue — full width, stacked one per screen feel */
+      .venues-wrap { flex-direction: column; align-items: center; padding: 0 12px; gap: 16px; }
+      .venue-card { width: 100%; max-width: 420px; padding: 28px 20px; }
+      .venue-icon-big { font-size: 36px; margin-bottom: 10px; }
+      .venue-name { font-size: 14px; }
+      .venue-addr { font-size: 12px; }
+      .map-btn { font-size: 10px; padding: 10px 18px; }
+
+      /* Family card — compact */
+      .family-card { padding: 22px 14px; margin: 20px 12px 0; border-radius: 18px; }
+      .family-quote { font-size: 18px; margin-bottom: 18px; line-height: 1.4; }
+      .family-role { font-size: 9px; letter-spacing: 2px; }
+      .family-pname { font-size: 13px; line-height: 1.7; }
+      .family-dot { font-size: 11px; }
+      .rose-divider { font-size: 16px; letter-spacing: 5px; margin: 14px 0; }
+
+      /* Sections */
+      .sec-heading { font-size: 36px; }
+      .section { padding: 50px 12px; }
+      .countdown-section { padding: 40px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+<button id="musicBtn" title="Toggle Music">🎵</button>
+<canvas id="petals-canvas"></canvas>
+
+<!-- ═══════════════════════════════════
+     ENVELOPE SCREEN — redesigned
+════════════════════════════════════ -->
+<div id="envelopeScreen" onclick="openInvitation()">
+
+  <!-- Screen corner flowers -->
+  <div class="screen-corner sc-tl">🌸</div>
+  <div class="screen-corner sc-tr">🌸</div>
+  <div class="screen-corner sc-bl">🌸</div>
+  <div class="screen-corner sc-br">🌸</div>
+
+  <!-- Top banner with names -->
+  <div class="env-banner">
+    <div class="env-banner-flowers">🌷 🌸 🌷</div>
+    <div class="env-banner-name">Shruthi &amp; Karthik</div>
+    <div class="env-banner-sub">✦ Wedding Invitation ✦</div>
+  </div>
+
+  <!-- Real envelope photo -->
+  <div class="env-scene" id="envScene">
+    <img class="env-img" src="envelope.jpg" alt="Wedding Invitation Envelope"/>
+  </div>
+
+  <!-- Tap hint -->
+  <div class="env-tap">
+    <p>✦ Tap to Open ✦</p>
+    <span class="tap-arrow">💌</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MAIN INVITATION
+════════════════════════════════════ -->
+<div id="invitation">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="mandala-ring"></div>
+    <div class="mandala-ring2"></div>
+
+    <div class="hero-flowers">🌸 🌺 🌷 🌺 🌸</div>
+    <p class="invite-label">✦ Wedding Invitation ✦</p>
+    <p class="together-text">Together with their families</p>
+
+    <div class="couple-names">
+      Shruthi
+      <span class="amp">&amp;</span>
+      Karthik
+    </div>
+
+    <div class="hearts-row">
+      <span class="heart-beat">💗</span>
+      <span class="heart-beat">💖</span>
+      <span class="heart-beat">💗</span>
+    </div>
+
+    <div class="wave-divider"></div>
+
+    <!-- SCRATCH TO REVEAL DATE -->
+    <div class="scratch-wrap">
+      <p class="scratch-hint">💅 Scratch to reveal the wedding date 💅</p>
+      <div class="scratch-container" id="scratchContainer">
+        <div class="date-reveal">
+          <div class="date-line1">02nd JULY 2026</div>
+          <div class="date-line2">Thursday · Basava Seva Sadan</div>
+        </div>
+        <canvas id="scratchCanvas"></canvas>
+      </div>
+      <div class="scratch-done-msg" id="scratchDoneMsg">🎉 Save the date! 🎉</div>
+    </div>
+
+    <!-- COUNTDOWN — hidden, slides in after scratch -->
+    <div class="countdown-reveal" id="countdownReveal">
+      <div class="countdown-inner">
+        <p class="cd-label">✦ Counting Down To The Big Day ✦</p>
+        <div class="countdown-grid">
+          <div class="count-box"><div class="count-num" id="days">00</div><div class="count-label">Days</div></div>
+          <div class="count-box"><div class="count-num" id="hours">00</div><div class="count-label">Hours</div></div>
+          <div class="count-box"><div class="count-num" id="minutes">00</div><div class="count-label">Minutes</div></div>
+          <div class="count-box"><div class="count-num" id="seconds">00</div><div class="count-label">Seconds</div></div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-family:'Great Vibes',cursive;font-size:clamp(22px,5vw,32px);color:var(--text-soft);margin-top:20px;position:relative;z-index:1;">
+      request the pleasure of your company
+    </p>
+  </section>
+
+  <!-- EVENTS — Wedding first, Reception second -->
+  <section class="section events-section reveal">
+    <p class="sec-label">✦ Celebrations ✦</p>
+    <h2 class="sec-heading">Join Us For</h2>
+
+    <div class="schedule-grid">
+      <!-- reception-card.png is physically the MARRIAGE card (file names were swapped when downloaded) -->
+      <div class="schedule-item">
+        <img src="reception-card.png" alt="Marriage Ceremony – 02 July 2026"/>
+      </div>
+      <!-- marriage-card.png is physically the RECEPTION card -->
+      <div class="schedule-item">
+        <img src="marriage-card.png" alt="Wedding Reception – 03 July 2026"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- VENUE -->
+  <section class="section venue-section reveal">
+    <p class="sec-label">✦ Venue ✦</p>
+    <h2 class="sec-heading">Where to Find Us</h2>
+
+    <div class="venues-wrap">
+      <div class="venue-card">
+        <span class="venue-icon-big">🏛️</span>
+        <div class="venue-event-tag">✦ Marriage Ceremony ✦</div>
+        <div class="venue-name">Basava Seva Sadan</div>
+        <div class="venue-addr">
+          Gurunagar Colony, Ravindra Nagar,<br>
+          Sadashivpet, Telangana – 502291
+        </div>
+        <a class="map-btn" href="https://maps.app.goo.gl/4MMBZQbaC8NX61MLA?g_st=aw" target="_blank">📍 Open in Maps</a>
+      </div>
+
+      <div class="venue-card">
+        <span class="venue-icon-big">🌟</span>
+        <div class="venue-event-tag">✦ Wedding Reception ✦</div>
+        <div class="venue-name">PSR Garden Muthangi</div>
+        <div class="venue-addr">
+          PSR Gardens Function Hall, NH 65,<br>
+          Muthangi, Hyderabad – 502300
+        </div>
+        <a class="map-btn" href="https://maps.app.goo.gl/VMnJV3QxK9kVZsFq8?g_st=iw" target="_blank">📍 Open in Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="section gallery-section reveal">
+    <p class="sec-label">✦ Our Moments ✦</p>
+    <h2 class="sec-heading">The Happy Couple</h2>
+    <div class="photo-strip">
+      <div class="photo-frame"><img src="photo1.jpg" alt="Shruthi & Karthik"/></div>
+      <div class="photo-frame"><img src="photo2.jpg" alt="Shruthi & Karthik"/></div>
+      <div class="photo-frame"><img src="photo3.jpg" alt="Shruthi & Karthik"/></div>
+    </div>
+  </section>
+
+  <!-- FAMILY — Bride first, Groom second -->
+  <section class="section family-section reveal">
+    <p class="sec-label">✦ With Blessings From ✦</p>
+    <h2 class="sec-heading">Our Families</h2>
+
+    <div class="family-card">
+      <div class="family-quote">
+        "With joyful hearts, we invite you to celebrate the wedding of our beloved daughter"
+      </div>
+
+      <!-- BRIDE'S PARENTS — FIRST -->
+      <div class="family-block">
+        <div class="family-role">Bride's Parents</div>
+        <div class="family-pname">
+          Sri Anjaneyulu Pantulu<br>
+          &amp; Smt. Ahalya Pantulu
+          <span class="family-dot">D/o. Smt. &amp; Sri Pantulu Ahalya and Anjaneyulu</span>
+          <em>(Parents of Shruthi)</em>
+        </div>
+      </div>
+
+      <div class="rose-divider">🌸 🌺 🌸</div>
+
+      <!-- GROOM'S PARENTS — SECOND -->
+      <div class="family-block">
+        <div class="family-role">Groom's Parents</div>
+        <div class="family-pname">
+          Sri Eluri Satyanarayana<br>
+          &amp; Smt. Eluri Anitha
+          <em>(Parents of Karthik)</em>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer reveal">
+    <div class="footer-names">Shruthi &amp; Karthik</div>
+    <p class="footer-msg">We look forward to celebrating with you</p>
+    <p class="footer-date">02 · 07 · 2026</p>
+  </footer>
+
+</div><!-- #invitation -->
+
+<script>
+  /* ─── FLOATING PETALS ─── */
+  const petalCanvas = document.getElementById('petals-canvas');
+  const pCtx        = petalCanvas.getContext('2d');
+  function resizePetals(){
+    petalCanvas.width  = window.innerWidth;
+    petalCanvas.height = window.innerHeight;
+  }
+  resizePetals();
+  window.addEventListener('resize', resizePetals);
+
+  const EMOJIS = ['🌸','🌺','🌷','💮','🌼'];
+  const petals = Array.from({length:28}, () => ({
+    x:       Math.random() * window.innerWidth,
+    y:       Math.random() * window.innerHeight * -1,
+    size:    10 + Math.random() * 14,
+    speed:   0.6 + Math.random() * 1.2,
+    angle:   Math.random() * Math.PI * 2,
+    spin:    (Math.random() - 0.5) * 0.04,
+    emoji:   EMOJIS[Math.floor(Math.random() * EMOJIS.length)],
+    opacity: 0.5 + Math.random() * 0.5,
+    phase:   Math.random() * Math.PI * 2,
+  }));
+
+  function drawPetals(){
+    pCtx.clearRect(0, 0, petalCanvas.width, petalCanvas.height);
+    petals.forEach(p => {
+      p.phase += 0.025; p.y += p.speed;
+      p.x += Math.sin(p.phase) * 0.8; p.angle += p.spin;
+      if(p.y > petalCanvas.height + 30){ p.y = -30; p.x = Math.random() * petalCanvas.width; }
+      pCtx.save();
+      pCtx.globalAlpha = p.opacity;
+      pCtx.translate(p.x, p.y); pCtx.rotate(p.angle);
+      pCtx.font = `${p.size}px serif`;
+      pCtx.textAlign = 'center'; pCtx.textBaseline = 'middle';
+      pCtx.fillText(p.emoji, 0, 0);
+      pCtx.restore();
+    });
+    requestAnimationFrame(drawPetals);
+  }
+  drawPetals();
+
+  /* ─── ENVELOPE OPEN ─── */
+  function openInvitation(){
+    const scene = document.getElementById('envScene');
+    // Shake first, then fade out
+    scene.classList.add('shake');
+    setTimeout(() => {
+      document.getElementById('envelopeScreen').classList.add('fade-out');
+      setTimeout(() => {
+        document.getElementById('envelopeScreen').style.display = 'none';
+        document.getElementById('invitation').style.display = 'block';
+        initScratch();
+        initReveal();
+        tryMusic();
+      }, 1000);
+    }, 500);
+  }
+
+  /* ─── MUSIC ─── */
+  const audio    = document.getElementById('bgMusic');
+  const musicBtn = document.getElementById('musicBtn');
+  let playing    = false;
+
+  function tryMusic(){
+    audio.play()
+      .then(() => { playing = true;  musicBtn.textContent = '🔊'; })
+      .catch(()  => { musicBtn.textContent = '🎵'; });
+  }
+  musicBtn.addEventListener('click', () => {
+    if(playing){ audio.pause(); playing=false; musicBtn.textContent='🔇'; }
+    else       { audio.play();  playing=true;  musicBtn.textContent='🔊'; }
+  });
+
+  /* ─── COUNTDOWN ─── */
+  const weddingDate = new Date(2026, 6, 2, 7, 46, 0); // 2 July 2026, 7:46 AM
+
+  function tick(){
+    const diff = weddingDate - new Date();
+    if(diff <= 0){
+      ['days','hours','minutes','seconds'].forEach((id,i) =>
+        document.getElementById(id).textContent = i===3 ? '🎉' : '00');
+      return;
+    }
+    const d = Math.floor(diff / 864e5);
+    const h = Math.floor((diff % 864e5) / 36e5);
+    const m = Math.floor((diff % 36e5)  / 6e4);
+    const s = Math.floor((diff % 6e4)   / 1e3);
+    document.getElementById('days').textContent    = String(d).padStart(2,'0');
+    document.getElementById('hours').textContent   = String(h).padStart(2,'0');
+    document.getElementById('minutes').textContent = String(m).padStart(2,'0');
+    document.getElementById('seconds').textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  /* ─── SCRATCH TO REVEAL — reveals date AND countdown ─── */
+  function initScratch(){
+    const container = document.getElementById('scratchContainer');
+    const sc        = document.getElementById('scratchCanvas');
+    const doneMsg   = document.getElementById('scratchDoneMsg');
+    const cdReveal  = document.getElementById('countdownReveal');
+    const W = container.offsetWidth;
+    const H = container.offsetHeight;
+    sc.width  = W;
+    sc.height = H;
+    const ctx = sc.getContext('2d');
+
+    // Draw scratch cover — rose/lavender gradient
+    const grad = ctx.createLinearGradient(0, 0, W, H);
+    grad.addColorStop(0,   '#f9c6c9');
+    grad.addColorStop(0.5, '#d4b8e0');
+    grad.addColorStop(1,   '#ffd6b0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    // Dot texture
+    ctx.fillStyle = 'rgba(255,255,255,0.22)';
+    for(let i=0; i<50; i++){
+      ctx.beginPath();
+      ctx.arc(Math.random()*W, Math.random()*H, 2+Math.random()*4, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    // Cover text
+    ctx.fillStyle = 'rgba(74,32,64,0.7)';
+    ctx.font = 'bold 14px Cinzel,serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('✦ SCRATCH HERE ✦', W/2, H/2 - 8);
+    ctx.font = '11px Cinzel,serif';
+    ctx.fillText('to reveal the date', W/2, H/2 + 12);
+    // Emoji corners
+    ctx.font = '18px serif';
+    ctx.fillText('💍', 22, 22);
+    ctx.fillText('🌹', W-22, 22);
+    ctx.fillText('🌸', 22, H-10);
+    ctx.fillText('💕', W-22, H-10);
+
+    let isDrawing = false;
+    let revealed  = false;
+
+    function getPos(e){
+      const r = sc.getBoundingClientRect();
+      if(e.touches) return { x: e.touches[0].clientX-r.left, y: e.touches[0].clientY-r.top };
+      return { x: e.clientX-r.left, y: e.clientY-r.top };
+    }
+
+    function scratch(e){
+      if(!isDrawing || revealed) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 24, 0, Math.PI*2);
+      ctx.fill();
+      if(!scratch._timer){
+        scratch._timer = setTimeout(() => {
+          scratch._timer = null;
+          checkReveal();
+        }, 300);
+      }
+    }
+
+    function checkReveal(){
+      const data = ctx.getImageData(0,0,W,H).data;
+      let cleared = 0;
+      for(let i=3; i<data.length; i+=4) if(data[i]===0) cleared++;
+      // Trigger at 25% — date is visible well before full scratch
+      if(cleared/(W*H) > 0.25 && !revealed){
+        revealed = true;
+
+        // Fade out scratch cover
+        sc.style.transition = 'opacity 0.7s ease';
+        sc.style.opacity = '0';
+        setTimeout(() => sc.style.display='none', 700);
+
+        // Show "Save the date" message
+        doneMsg.classList.add('show');
+
+        // Slide in countdown — use double rAF so CSS transition fires correctly
+        cdReveal.style.display = 'block';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            cdReveal.classList.add('shown');
+          });
+        });
+
+        // Confetti burst
+        burstConfetti();
+      }
+    }
+
+    sc.addEventListener('mousedown',  e => { isDrawing=true; scratch(e); });
+    sc.addEventListener('mousemove',  e => scratch(e));
+    sc.addEventListener('mouseup',    () => isDrawing=false);
+    sc.addEventListener('mouseleave', () => isDrawing=false);
+    sc.addEventListener('touchstart', e => { isDrawing=true; scratch(e); }, {passive:false});
+    sc.addEventListener('touchmove',  e => scratch(e), {passive:false});
+    sc.addEventListener('touchend',   () => isDrawing=false);
+  }
+
+  /* ─── CONFETTI BURST ─── */
+  function burstConfetti(){
+    const colors = ['#f9c6c9','#d4b8e0','#ffd6b0','#b8e4d0','#fff0b3','#e87ea1'];
+    const pieces = Array.from({length:90}, () => ({
+      x:  window.innerWidth/2,
+      y:  window.innerHeight/2,
+      vx: (Math.random()-0.5)*14,
+      vy: -Math.random()*16-4,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      size:  5+Math.random()*9,
+      rot:   Math.random()*360,
+      rsp:   (Math.random()-0.5)*12,
+      alpha: 1,
+    }));
+    const cc = document.createElement('canvas');
+    cc.style.cssText = 'position:fixed;inset:0;pointer-events:none;z-index:9998;';
+    cc.width = window.innerWidth; cc.height = window.innerHeight;
+    document.body.appendChild(cc);
+    const cctx = cc.getContext('2d');
+    function anim(){
+      cctx.clearRect(0,0,cc.width,cc.height);
+      let alive = false;
+      pieces.forEach(p => {
+        p.vy += 0.45; p.x += p.vx; p.y += p.vy;
+        p.rot += p.rsp; p.alpha = Math.max(0, p.alpha-0.011);
+        if(p.alpha > 0) alive = true;
+        cctx.save();
+        cctx.globalAlpha = p.alpha;
+        cctx.translate(p.x, p.y);
+        cctx.rotate(p.rot*Math.PI/180);
+        cctx.fillStyle = p.color;
+        cctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.5);
+        cctx.restore();
+      });
+      if(alive) requestAnimationFrame(anim);
+      else cc.remove();
+    }
+    anim();
+  }
+
+  /* ─── SCROLL REVEAL ─── */
+  function initReveal(){
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, {threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  }
+</script>
+</body>
+</html>
