@@ -9,7 +9,7 @@
   <meta property="og:type"        content="website"/>
   <meta property="og:title"       content="Shruthi &amp; Karthik Wedding Invitation 💍"/>
   <meta property="og:description" content="With love, we invite you to celebrate our wedding together. 02 July 2026 · Basava Seva Sadan, Sadashivpet"/>
-  <meta property="og:image"       content="https://sruthi986.github.io/Shruthi-Karthik/cover-card.png"/>
+  <meta property="og:image"       content="https://sruthi986.github.io/Shruthi-Karthik/reception-card.png"/>
   <meta property="og:url"         content="https://sruthi986.github.io/Shruthi-Karthik/"/>
   <meta property="og:image:width" content="1200"/>
   <meta property="og:image:height"content="630"/>
@@ -18,7 +18,7 @@
   <meta name="twitter:card"        content="summary_large_image"/>
   <meta name="twitter:title"       content="Shruthi &amp; Karthik Wedding Invitation 💍"/>
   <meta name="twitter:description" content="With love, we invite you to celebrate our wedding together. 02 July 2026"/>
-  <meta name="twitter:image"       content="https://sruthi986.github.io/Shruthi-Karthik/cover-card.png"/>
+  <meta name="twitter:image"       content="https://sruthi986.github.io/Shruthi-Karthik/reception-card.png"/>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap');
 
@@ -200,6 +200,77 @@
       animation:nameFloat 4s ease-in-out infinite;
       position:relative; z-index:1;
     }
+
+    /* Lord Vinayaka */
+    .vinayaka-wrap {
+      position:relative; z-index:1; margin-bottom:14px;
+      animation:nameFloat 4s ease-in-out infinite;
+    }
+    .vinayaka-img {
+      width: 162px; height: 162px; object-fit: contain;
+      filter: drop-shadow(0 4px 16px rgba(232,126,161,0.4));
+    }
+
+    /* Shree Ganeshaya Namah */
+    .ganesh-namah {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(14px,3.5vw,18px);
+      color:var(--text-mid); letter-spacing:2px;
+      font-style:italic; margin-bottom:20px;
+      position:relative; z-index:1;
+    }
+
+    /* Cordial invite text — both lines same size & color */
+    .cordial-text {
+      font-family:'Cormorant Garamond',serif;
+      text-align:center;
+      margin-bottom:30px;
+      position:relative; z-index:1;
+      max-width:90vw;
+    }
+    .cordial-line1 {
+      display:block;
+      font-size:clamp(14px,3.5vw,17px);
+      color:var(--text-mid); line-height:1.7;
+    }
+    .cordial-line2 {
+      display:block;
+      font-size:clamp(14px,3.5vw,17px);
+      color:var(--text-mid); line-height:1.7;
+    }
+
+    /* Parents under names in hero */
+    .hero-names-block {
+      position:relative; z-index:1; text-align:center;
+    }
+    .hero-single-name {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(60px,14vw,100px);
+      color:var(--deep-rose); line-height:1.05;
+      text-shadow:0 4px 20px rgba(232,126,161,0.3);
+      animation:nameGlow 3s ease-in-out infinite alternate;
+    }
+    .hero-parent-tag {
+      font-family:'Cormorant Garamond',serif;
+      font-size:clamp(12px,3vw,15px);
+      color:var(--text-soft); letter-spacing:0.5px;
+      margin-top:10px; margin-bottom:36px;
+      font-style:italic; line-height:1.9;
+    }
+
+    /* "with" between names */
+    .hero-with {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(20px,4.5vw,28px);
+      color:var(--text-mid); display:block;
+      line-height:1; margin:0 0 24px 0;
+    }
+    .hero-amp {
+      font-family:'Great Vibes',cursive;
+      font-size:clamp(40px,9vw,66px);
+      color:var(--lavender); display:block;
+      line-height:1; margin:4px 0;
+    }
     .invite-label {
       font-family:'Cinzel',serif; font-size:11px;
       letter-spacing:5px; color:var(--deep-rose);
@@ -264,18 +335,21 @@
     }
     .date-reveal {
       background:linear-gradient(135deg,#fff0f8,#f5e8ff);
-      padding:18px 36px; border-radius:16px;
+      padding:44px 52px; border-radius:20px;
       border:2px solid var(--rose);
+      min-width: 300px; min-height: 160px;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
     }
     .date-reveal .date-line1 {
       font-family:'Cinzel',serif;
-      font-size:clamp(18px,5vw,28px);
-      color:var(--deep-rose); letter-spacing:3px; font-weight:600;
+      font-size:clamp(22px,6vw,34px);
+      color:var(--deep-rose); letter-spacing:4px; font-weight:600;
     }
     .date-reveal .date-line2 {
       font-family:'Great Vibes',cursive;
-      font-size:clamp(20px,5vw,30px);
-      color:var(--text-mid); margin-top:2px;
+      font-size:clamp(24px,6vw,36px);
+      color:var(--text-mid); margin-top:10px;
     }
 
     #scratchCanvas {
@@ -468,6 +542,30 @@
     .photo-frame:nth-child(2):hover { transform: scale(1.05) rotate(-1.5deg); }
     .photo-frame:nth-child(3):hover { transform: scale(1.05) rotate(1.5deg); }
     .photo-frame img { width:100%; height:100%; object-fit:cover; object-position:center top; display:block; }
+
+    /* ── Slideshow for middle card ── */
+    .photo-slideshow {
+      position: relative; width:100%; height:100%; overflow:hidden;
+    }
+    .photo-slideshow .slide {
+      position: absolute; inset: 0;
+      opacity: 0; transition: opacity 1s ease;
+    }
+    .photo-slideshow .slide.active { opacity: 1; }
+    .photo-slideshow .slide img {
+      width:100%; height:100%; object-fit:cover; object-position:center top;
+    }
+    /* Dot indicators */
+    .slide-dots {
+      position: absolute; bottom: 10px; left:0; right:0;
+      display: flex; justify-content:center; gap:6px; z-index:2;
+    }
+    .slide-dot {
+      width:7px; height:7px; border-radius:50%;
+      background:rgba(255,255,255,0.5); transition:background 0.3s;
+      cursor:pointer;
+    }
+    .slide-dot.active { background:white; }
     .photo-ph {
       width:100%; height:100%;
       display:flex; flex-direction:column;
@@ -559,9 +657,9 @@
 
       /* Hero / scratch */
       .scratch-container { max-width: 88vw; }
-      .date-reveal { padding: 14px 18px; }
-      .date-reveal .date-line1 { font-size: 17px; letter-spacing: 1px; }
-      .date-reveal .date-line2 { font-size: 18px; }
+      .date-reveal { padding: 32px 24px; min-width: unset; width: 85vw; min-height: 130px; }
+      .date-reveal .date-line1 { font-size: 20px; letter-spacing: 2px; }
+      .date-reveal .date-line2 { font-size: 22px; }
       .countdown-inner { padding: 14px 10px; }
       .count-box { padding: 10px 12px; min-width: 54px; }
       .count-num { font-size: 26px; }
@@ -645,14 +743,40 @@
     <div class="mandala-ring"></div>
     <div class="mandala-ring2"></div>
 
-    <div class="hero-flowers">🌸 🌺 🌷 🌺 🌸</div>
-    <p class="invite-label">✦ Wedding Invitation ✦</p>
-    <p class="together-text">Together with their families</p>
+    <!-- Lord Vinayaka -->
+    <div class="vinayaka-wrap">
+      <img class="vinayaka-img" src="vinayaka.png"
+           alt="Lord Vinayaka"
+           onerror="this.parentNode.innerHTML='🙏'"/>
+    </div>
 
-    <div class="couple-names">
-      Shruthi
-      <span class="amp">&amp;</span>
-      Karthik
+    <!-- Shree Ganeshaya Namah -->
+    <p class="ganesh-namah">|| Shree Ganeshaya Namah ||</p>
+
+    <!-- Small decorative star like in reference screenshot -->
+    <div style="font-size:14px; color:var(--deep-rose); margin-bottom:12px; position:relative; z-index:1;">✦</div>
+
+    <!-- Cordial invite text — both lines same size & color -->
+    <p class="cordial-text">
+      <span class="cordial-line1">We cordially invite you to witness the beginning of our forever</span>
+      <span class="cordial-line2">and celebrate the wedding ceremony of</span>
+    </p>
+
+    <!-- Names with parents below each -->
+    <div class="hero-names-block">
+      <div class="hero-single-name">Shruthi</div>
+      <div class="hero-parent-tag">
+        D/o. Smt. Pantulu Ahalya<br> 
+	 &amp; Sri Pantulu Anjaneyulu
+      </div>
+
+      <span class="hero-with">with</span>
+
+      <div class="hero-single-name">Karthik</div>
+      <div class="hero-parent-tag">
+        S/o. Smt. Eluri Anitha<br>
+        &amp; Sri Eluri Satyanarayana
+      </div>
     </div>
 
     <div class="hearts-row">
@@ -746,9 +870,31 @@
     <p class="sec-label">✦ Our Moments ✦</p>
     <h2 class="sec-heading">The Happy Couple</h2>
     <div class="photo-strip">
-      <div class="photo-frame"><img src="photo1.jpg" alt="Shruthi & Karthik"/></div>
-      <div class="photo-frame"><img src="photo2.jpg" alt="Shruthi & Karthik"/></div>
-      <div class="photo-frame"><img src="photo3.jpg" alt="Shruthi & Karthik"/></div>
+
+      <!-- Left card — Bride -->
+      <div class="photo-frame">
+        <img src="photo1.jpg" alt="Shruthi"/>
+      </div>
+
+      <!-- Middle card — Couple slideshow (photo2, photo4, photo5) -->
+      <div class="photo-frame" id="slideshowFrame">
+        <div class="photo-slideshow" id="photoSlideshow">
+          <div class="slide active"><img src="photo2.jpg" alt="Shruthi & Karthik"/></div>
+          <div class="slide"><img src="photo4.jpg" alt="Shruthi & Karthik"/></div>
+          <div class="slide"><img src="photo5.jpg" alt="Shruthi & Karthik"/></div>
+        </div>
+        <div class="slide-dots">
+          <div class="slide-dot active" onclick="goToSlide(0)"></div>
+          <div class="slide-dot"        onclick="goToSlide(1)"></div>
+          <div class="slide-dot"        onclick="goToSlide(2)"></div>
+        </div>
+      </div>
+
+      <!-- Right card — Groom -->
+      <div class="photo-frame">
+        <img src="photo3.jpg" alt="Karthik"/>
+      </div>
+
     </div>
   </section>
 
@@ -768,8 +914,6 @@
         <div class="family-pname">
           Smt. Ahalya Pantulu<br>
           &amp; Sri Anjaneyulu Pantulu
-          <span class="family-dot">D/o. Smt. Pantulu Ahalya &amp; Sri Pantulu Anjaneyulu</span>
-          <em>(Parents of Shruthi)</em>
         </div>
       </div>
 
@@ -781,7 +925,6 @@
         <div class="family-pname">
           Smt. Eluri Anitha<br>
           &amp; Sri Eluri Satyanarayana
-          <em>(Parents of Karthik)</em>
         </div>
       </div>
     </div>
@@ -1050,6 +1193,22 @@
     // Scroll so the middle card is centered in the strip
     strip.scrollLeft = frameLeft - (stripW - frameW) / 2;
   }
+
+  /* ─── MIDDLE CARD SLIDESHOW ─── */
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('#photoSlideshow .slide');
+  const dots   = document.querySelectorAll('.slide-dot');
+
+  function goToSlide(n) {
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+    currentSlide = n;
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+  }
+
+  // Auto-advance every 3 seconds
+  setInterval(() => goToSlide((currentSlide + 1) % slides.length), 3000);
 
   /* ─── SCROLL REVEAL ─── */
   function initReveal(){
