@@ -1022,10 +1022,32 @@
     anim();
   }
 
+  /* ─── CENTER MIDDLE PHOTO ON MOBILE ─── */
+  function centerMiddlePhoto() {
+    if (window.innerWidth > 800) return; // desktop shows all 3, no need
+    const strip  = document.querySelector('.photo-strip');
+    const frames = strip.querySelectorAll('.photo-frame');
+    if (frames.length < 2) return;
+    const middle     = frames[1]; // couple photo (2nd card)
+    const stripW     = strip.offsetWidth;
+    const frameLeft  = middle.offsetLeft;
+    const frameW     = middle.offsetWidth;
+    // Scroll so the middle card is centered in the strip
+    strip.scrollLeft = frameLeft - (stripW - frameW) / 2;
+  }
+
   /* ─── SCROLL REVEAL ─── */
   function initReveal(){
     const io = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+      entries.forEach(e => {
+        if(e.isIntersecting) {
+          e.target.classList.add('visible');
+          // When gallery comes into view, center the couple photo
+          if(e.target.classList.contains('gallery-section')) {
+            setTimeout(centerMiddlePhoto, 300);
+          }
+        }
+      });
     }, {threshold:0.12});
     document.querySelectorAll('.reveal').forEach(el => io.observe(el));
   }
