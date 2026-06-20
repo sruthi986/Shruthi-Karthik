@@ -1,170 +1,342 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
+  <title>WhatsApp Cover Generator — 1200×630</title>
+
+  <!-- html2canvas: renders HTML → Canvas → PNG download -->
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;600&family=Cormorant+Garamond:wght@400;600&display=swap');
 
     * { margin:0; padding:0; box-sizing:border-box; }
 
     body {
-      width: 1200px; height: 630px;
-      overflow: hidden; background: #f8f0e8;
-      display: flex; align-items: stretch;
+      background: #111;
+      font-family: Arial, sans-serif;
+      display: flex; flex-direction: column;
+      align-items: center;
+      padding: 32px 20px 48px;
+      gap: 22px;
     }
 
-    /* ── LEFT: Text side ── */
-    .left {
+    /* ─── TOOLBAR ─── */
+    .toolbar {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 12px;
+      width: 100%; max-width: 680px;
+    }
+    .toolbar h1 {
+      color: #c9a44e; font-size: 12px;
+      letter-spacing: 5px; text-transform: uppercase;
+    }
+    .status {
+      color: rgba(255,255,255,.55); font-size: 13px;
+      min-height: 18px; text-align: center;
+    }
+    .btn-generate {
+      background: #c9a44e; color: #000; border: none;
+      padding: 14px 44px; font-size: 14px; font-weight: bold;
+      border-radius: 8px; cursor: pointer; letter-spacing: 2px;
+      text-transform: uppercase; transition: background .2s;
+    }
+    .btn-generate:hover   { background: #e0b85c; }
+    .btn-generate:disabled{ opacity: .4; cursor: not-allowed; }
+
+    /* ─── PREVIEW WRAPPER (scaled-down for screen) ─── */
+    /*
+      The actual #cover is 1200×630.
+      We scale it to 55% for comfortable screen preview.
+      html2canvas captures it at full 1200×630 (ignores CSS transform).
+    */
+    .preview-shell {
+      width:  660px;   /* 1200 × 0.55 */
+      height: 347px;   /* 630  × 0.55 */
+      overflow: hidden;
+      border: 2px solid rgba(201,164,78,.25);
+      border-radius: 6px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .preview-label {
+      position: absolute; top: 8px; left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.6); color: rgba(201,164,78,.8);
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 20px; z-index: 99;
+      pointer-events: none; white-space: nowrap;
+    }
+
+    /* ══════════════════════════════════════════
+       THE ACTUAL COVER  — 1200 × 630 px
+       (html2canvas captures this element)
+    ══════════════════════════════════════════ */
+    #cover {
+      width:  1200px;
+      height: 630px;
+      background: #f8f0e8;
+      display: flex; align-items: stretch;
+      transform: scale(0.55);
+      transform-origin: top left;
+      /* This keeps it inside the 660×347 shell */
+    }
+
+    /* ── LEFT: text panel ── */
+    .cv-left {
       width: 560px; flex-shrink: 0;
-      background: linear-gradient(160deg, #fdf8f2, #fdeef5, #f5eeff);
+      background: linear-gradient(155deg, #fdf9f3 0%, #fdeef5 55%, #f5eeff 100%);
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       padding: 40px 50px;
       position: relative; overflow: hidden;
     }
-
-    /* Botanical watermark corner */
-    .left::before {
+    /* top-left green botanical wash */
+    .cv-left::before {
       content: '';
-      position: absolute; top: 0; left: 0;
-      width: 180px; height: 180px;
-      background:
-        radial-gradient(circle at 20% 20%, rgba(180,200,140,0.25) 0%, transparent 60%);
+      position: absolute; top: -30px; left: -30px;
+      width: 220px; height: 220px;
+      background: radial-gradient(circle at 25% 25%,
+        rgba(140,180,100,.26) 0%, transparent 65%);
     }
-    .left::after {
+    /* bottom-right rose wash */
+    .cv-left::after {
       content: '';
-      position: absolute; bottom: 0; right: 0;
-      width: 160px; height: 160px;
-      background:
-        radial-gradient(circle at 80% 80%, rgba(232,126,161,0.12) 0%, transparent 60%);
+      position: absolute; bottom: -30px; right: -30px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle at 75% 75%,
+        rgba(232,126,161,.18) 0%, transparent 65%);
     }
-
-    /* Gold border accent */
-    .left-border {
-      position: absolute; inset: 16px;
-      border: 1px solid rgba(180,140,80,0.2);
+    /* gold frame */
+    .cv-frame {
+      position: absolute; inset: 18px;
+      border: 1px solid rgba(180,140,80,.22);
       pointer-events: none;
     }
-    .left-border::before {
-      content: ''; position: absolute; inset: 5px;
-      border: 1px solid rgba(180,140,80,0.1);
+    .cv-frame::before {
+      content: ''; position: absolute; inset: 6px;
+      border: 1px solid rgba(180,140,80,.1);
     }
+    /* corner leaves */
+    .lf { position: absolute; font-size: 38px; opacity: .32; line-height: 1; }
+    .lf-tl { top:14px; left:16px;  transform: rotate(-20deg); }
+    .lf-tr { top:14px; right:16px; transform: rotate(20deg) scaleX(-1); }
+    .lf-bl { bottom:14px; left:16px;  transform: rotate(160deg); }
+    .lf-br { bottom:14px; right:16px; transform: rotate(-160deg) scaleX(-1); }
 
-    /* Corner leaves */
-    .leaf-tl { position:absolute; top:10px; left:10px; font-size:32px; opacity:0.35; transform:rotate(-20deg); }
-    .leaf-tr { position:absolute; top:10px; right:10px; font-size:28px; opacity:0.3; transform:rotate(20deg) scaleX(-1); }
-    .leaf-bl { position:absolute; bottom:10px; left:10px; font-size:26px; opacity:0.25; transform:rotate(160deg); }
-    .leaf-br { position:absolute; bottom:10px; right:10px; font-size:30px; opacity:0.3; transform:rotate(-160deg) scaleX(-1); }
-
-    .wedding-label {
+    /* text content */
+    .cv-wi-label {
       font-family: 'Cinzel', serif;
-      font-size: 11px; letter-spacing: 7px;
-      color: rgba(140,90,60,0.7);
-      text-transform: uppercase; margin-bottom: 6px;
-      position: relative; z-index:1;
+      font-size: 13px; letter-spacing: 9px;
+      text-transform: uppercase; color: rgba(120,75,45,.72);
+      margin-bottom: 6px; position: relative; z-index: 1;
     }
-
-    .heart-divider {
-      font-size: 14px; color: rgba(232,126,161,0.6);
-      margin-bottom: 18px; letter-spacing: 8px;
-      position: relative; z-index:1;
+    .cv-heart {
+      font-size: 22px; color: rgba(220,130,150,.75);
+      margin-bottom: 20px; position: relative; z-index: 1;
     }
-
-    .bride-name {
+    .cv-bride {
       font-family: 'Great Vibes', cursive;
-      font-size: 82px; color: #b05070;
-      line-height: 1; position: relative; z-index:1;
-      text-shadow: 0 2px 12px rgba(180,80,100,0.2);
+      font-size: 96px; color: #b05070; line-height: .9;
+      position: relative; z-index: 1;
+      text-shadow: 0 3px 18px rgba(180,80,100,.22);
     }
-
-    .amp {
+    .cv-amp {
       font-family: 'Great Vibes', cursive;
-      font-size: 42px; color: rgba(160,110,70,0.8);
-      position: relative; z-index:1; margin: 2px 0;
+      font-size: 48px; color: rgba(150,100,60,.8);
+      position: relative; z-index: 1; margin: 4px 0;
     }
-
-    .groom-name {
+    .cv-groom {
       font-family: 'Great Vibes', cursive;
-      font-size: 82px; color: #b05070;
-      line-height: 1; position: relative; z-index:1;
-      text-shadow: 0 2px 12px rgba(180,80,100,0.2);
+      font-size: 96px; color: #b05070; line-height: .9;
+      position: relative; z-index: 1;
+      text-shadow: 0 3px 18px rgba(180,80,100,.22);
+    }
+    .cv-date {
+      font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 4px;
+      color: rgba(100,65,45,.65); margin-top: 26px;
+      position: relative; z-index: 1;
     }
 
-    .date-line {
-      font-family: 'Cinzel', serif;
-      font-size: 11px; letter-spacing: 3px;
-      color: rgba(120,80,60,0.6);
-      margin-top: 20px; position: relative; z-index:1;
-    }
-
-    /* ── RIGHT: Photo side ── */
-    .right {
+    /* ── RIGHT: photo panel ── */
+    .cv-right {
       flex: 1; position: relative; overflow: hidden;
     }
-    .right img {
-      width: 100%; height: 100%; object-fit: cover;
-      object-position: center top;
+    .cv-right img {
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      display: block;
     }
-
-    /* Gradient overlay on photo left edge to blend */
-    .right::before {
+    /* blend gradient: left edge of photo */
+    .cv-right::before {
       content: '';
-      position: absolute; top:0; left:0; bottom:0; width:80px;
+      position: absolute; top: 0; left: 0; bottom: 0;
+      width: 100px;
       background: linear-gradient(90deg, #fdeef5, transparent);
       z-index: 1;
     }
-    /* Subtle dark overlay at top/bottom */
-    .right::after {
+    /* subtle top/bottom darkening */
+    .cv-right::after {
       content: '';
-      position: absolute; inset:0;
+      position: absolute; inset: 0;
       background: linear-gradient(180deg,
-        rgba(0,0,0,0.06) 0%, transparent 30%,
-        transparent 70%, rgba(0,0,0,0.1) 100%);
+        rgba(0,0,0,.06) 0%, transparent 28%,
+        transparent 72%, rgba(0,0,0,.1) 100%);
       z-index: 1;
     }
 
-    /* Bottom instructions bar — will be cropped in screenshot */
-    .instructions {
-      position: fixed; bottom: 0; left: 0; right: 0;
-      background: #222; color: #fff; padding: 8px 16px;
-      font-family: Arial, sans-serif; font-size: 12px;
-      display: flex; align-items: center; gap: 20px;
-      z-index: 999;
+    /* ─── GUIDE BOX ─── */
+    .guide {
+      width: 100%; max-width: 680px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 22px 28px;
+      color: rgba(255,255,255,.7);
+      font-size: 13px; line-height: 2.1;
     }
-    .instructions strong { color: #f0d080; }
+    .guide h2 {
+      color: #c9a44e; font-size: 11px;
+      letter-spacing: 4px; text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .guide code {
+      background: rgba(201,164,78,.18);
+      color: #f0cf80;
+      padding: 2px 8px; border-radius: 4px;
+      font-family: monospace; font-size: 12px;
+    }
+    .guide .step-num {
+      display: inline-block;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(201,164,78,.3); color: #f0cf80;
+      font-size: 11px; font-weight: bold;
+      text-align: center; line-height: 22px;
+      margin-right: 8px; flex-shrink: 0;
+    }
+    .step { display: flex; align-items: flex-start; margin-bottom: 4px; }
   </style>
 </head>
 <body>
 
-  <!-- LEFT — Text -->
-  <div class="left">
-    <div class="left-border"></div>
-    <div class="leaf-tl">🌿</div>
-    <div class="leaf-tr">🌿</div>
-    <div class="leaf-bl">🌸</div>
-    <div class="leaf-br">🌸</div>
+<div class="toolbar">
+  <h1>⚙ WhatsApp / Instagram Cover Generator</h1>
+  <p class="status" id="status">⏳ Loading fonts… please wait before clicking.</p>
+  <button class="btn-generate" id="dlBtn" onclick="generateCover()" disabled>
+    ⬇ &nbsp; Generate &amp; Download  cover-og.png
+  </button>
+</div>
 
-    <div class="wedding-label">Wedding Invitation</div>
-    <div class="heart-divider">♡</div>
+<!-- ── SCALED PREVIEW SHELL ── -->
+<div class="preview-shell">
+  <div class="preview-label">Preview · actual size: 1200 × 630 px</div>
 
-    <div class="bride-name">Shruthi</div>
-    <div class="amp">&amp;</div>
-    <div class="groom-name">Karthik</div>
+  <!-- ════════════════════════════════════════
+       #cover — THIS is what gets captured.
+       It is always 1200×630 px in the DOM.
+       html2canvas ignores the scale(0.55).
+  ════════════════════════════════════════ -->
+  <div id="cover">
 
-    <div class="date-line">02 · JULY · 2026</div>
+    <!-- LEFT: text -->
+    <div class="cv-left">
+      <div class="cv-frame"></div>
+      <span class="lf lf-tl">🌿</span>
+      <span class="lf lf-tr">🌿</span>
+      <span class="lf lf-bl">🌸</span>
+      <span class="lf lf-br">🌸</span>
+
+      <div class="cv-wi-label">Wedding Invitation</div>
+      <div class="cv-heart">♡</div>
+      <div class="cv-bride">Shruthi</div>
+      <div class="cv-amp">&amp;</div>
+      <div class="cv-groom">Karthik</div>
+      <div class="cv-date">02 &nbsp;·&nbsp; JULY &nbsp;·&nbsp; 2026</div>
+    </div>
+
+    <!-- RIGHT: couple photo -->
+    <div class="cv-right">
+      <img id="couplePhoto" src="photo2.jpg" alt="Shruthi &amp; Karthik" crossorigin="anonymous"/>
+    </div>
+
+  </div><!-- #cover -->
+</div><!-- .preview-shell -->
+
+<!-- ─── STEP-BY-STEP GUIDE ─── -->
+<div class="guide">
+  <h2>📋 Step-by-Step: Fix WhatsApp Preview</h2>
+
+  <div class="step"><span class="step-num">1</span>
+    Wait for fonts to load, then click <strong style="color:#c9a44e">"Generate &amp; Download"</strong> above.<br>
+    This saves exactly <code>cover-og.png</code> at <strong>1200 × 630 px</strong>.
   </div>
-
-  <!-- RIGHT — Couple Photo -->
-  <div class="right">
-    <img src="photo2.jpg" alt="Shruthi & Karthik"/>
+  <div class="step"><span class="step-num">2</span>
+    Put <code>cover-og.png</code> in your website folder (same folder as <code>index.html</code>).
   </div>
+  <div class="step"><span class="step-num">3</span>
+    In <code>index.html</code>, the og:image URL is already updated to use <code>cover-og.png</code>.
+  </div>
+  <div class="step"><span class="step-num">4</span>
+    <strong>Deploy:</strong> Push to GitHub Pages or drag-drop folder to Netlify.
+  </div>
+  <div class="step"><span class="step-num">5</span>
+    <strong>Clear WhatsApp cache</strong> — go to:<br>
+    &nbsp;&nbsp;<code>developers.facebook.com/tools/debug</code><br>
+    &nbsp;&nbsp;Paste your URL → click <strong>"Scrape Again"</strong> → try sharing now.
+  </div>
+  <div class="step"><span class="step-num">6</span>
+    Or simply add <code>?v=2</code> to your URL when sharing:<br>
+    &nbsp;&nbsp;<code>https://your-site.netlify.app/?v=2</code><br>
+    This forces WhatsApp to fetch a fresh preview.
+  </div>
+</div>
 
+<script>
+  /* ── Wait for Google Fonts to fully load ── */
+  document.fonts.ready.then(() => {
+    setTimeout(() => {
+      document.getElementById('status').textContent = '✅ Fonts loaded. Ready to generate!';
+      document.getElementById('dlBtn').disabled = false;
+    }, 600); // small extra delay for render
+  });
+
+  /* ── GENERATE & DOWNLOAD ── */
+  function generateCover() {
+    const btn    = document.getElementById('dlBtn');
+    const status = document.getElementById('status');
+    btn.disabled = true;
+    status.textContent = '⏳ Capturing at 1200×630 px… please wait.';
+
+    const el = document.getElementById('cover');
+
+    html2canvas(el, {
+      width:           1200,
+      height:          630,
+      scale:           1,          // capture at true 1:1 — no scaling
+      useCORS:         true,
+      allowTaint:      true,
+      logging:         false,
+      backgroundColor: '#f8f0e8',
+      ignoreElements:  (node) => node.classList && node.classList.contains('preview-label'),
+    }).then(canvas => {
+      /* verify dimensions */
+      if (canvas.width !== 1200 || canvas.height !== 630) {
+        status.textContent = `⚠ Got ${canvas.width}×${canvas.height} — expected 1200×630. Try again.`;
+        btn.disabled = false;
+        return;
+      }
+      const link      = document.createElement('a');
+      link.download   = 'cover-og.png';
+      link.href       = canvas.toDataURL('image/png', 1.0);
+      link.click();
+      status.textContent = '✅ Downloaded! Now upload cover-og.png to your site and redeploy.';
+      btn.disabled = false;
+    }).catch(err => {
+      status.textContent = '⚠ Error: ' + err.message;
+      btn.disabled = false;
+      console.error(err);
+    });
+  }
+</script>
 </body>
 </html>
-
-<!-- HOW TO SAVE AS COVER IMAGE:
-  1. Press F11 to go fullscreen (removes browser chrome)
-  2. Press Win + Shift + S → select exactly the 1200x630 area
-  3. Save as "cover.jpg" in this same folder
-  4. Upload cover.jpg to GitHub
--->
